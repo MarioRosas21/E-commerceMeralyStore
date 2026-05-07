@@ -1,0 +1,256 @@
+@import "tailwindcss";
+
+/* =========================
+   THEME
+========================= */
+
+:root {
+  /* Base */
+  --background: #fcfafe;
+  --foreground: #2d2434;
+
+  /* Public */
+  --public-bg: #fcfafe;
+  --public-surface: #ffffff;
+  --public-soft: #ebe0f5;
+  --public-soft-2: #f6effc;
+
+  --public-primary: #a06ec4;
+  --public-primary-hover: #8d5cb2;
+
+  --public-secondary: #cba9ef;
+
+  --public-pink: #f8b5d2;
+  --public-pink-strong: #e378a8;
+
+  --public-border: #e7ddf1;
+
+  /* Admin */
+  --admin-bg: #fcfaff;
+  --admin-surface: #ffffff;
+  --admin-soft: #f7f1fd;
+
+  --admin-primary-soft: #e8d6fe;
+  --admin-primary: #a06ec4;
+  --admin-primary-hover: #8f5db6;
+
+  --admin-border: #ede7f5;
+
+  /* Text */
+  --text-primary: #2d2434;
+  --text-secondary: #6b6174;
+  --text-muted: #8a7f95;
+
+  /* Status */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+}
+
+/* =========================
+   TAILWIND THEME
+========================= */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* =========================
+   GLOBAL
+========================= */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--public-bg);
+  color: var(--text-primary);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* =========================
+   SHARED COMPONENTS
+========================= */
+
+.ms-card {
+  background: var(--public-surface);
+  border: 1px solid var(--public-border);
+  border-radius: 1.25rem;
+  box-shadow: 0 18px 50px rgba(80, 45, 110, 0.08);
+}
+
+.ms-btn-primary {
+  background: linear-gradient(
+    135deg,
+    var(--public-primary),
+    var(--public-primary-hover)
+  );
+
+  color: white;
+  border-radius: 0.9rem;
+  font-weight: 800;
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    opacity 0.18s ease;
+
+  box-shadow: 0 12px 25px rgba(160, 110, 196, 0.25);
+}
+
+.ms-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 32px rgba(160, 110, 196, 0.32);
+}
+
+.ms-btn-primary:active {
+  transform: scale(0.98);
+}
+
+.ms-btn-secondary {
+  background: var(--public-soft);
+  color: var(--public-primary);
+
+  border-radius: 0.9rem;
+  font-weight: 800;
+
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease;
+}
+
+.ms-btn-secondary:hover {
+  background: var(--public-secondary);
+  color: white;
+}
+
+.ms-input {
+  width: 100%;
+  border: 1px solid var(--public-border);
+  border-radius: 1rem;
+  background: white;
+  outline: none;
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.ms-input:focus {
+  border-color: var(--public-primary);
+  box-shadow: 0 0 0 4px rgba(160, 110, 196, 0.12);
+}
+
+/* =========================
+   PUBLIC SHOP
+========================= */
+
+.ms-public-page {
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(232, 214, 254, 0.65),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(248, 181, 210, 0.35),
+      transparent 35%
+    ),
+    var(--public-bg);
+}
+
+.ms-chip {
+  border: 1px solid var(--public-border);
+
+  background: rgba(255, 255, 255, 0.78);
+
+  color: var(--public-primary);
+
+  border-radius: 999px;
+  font-weight: 800;
+
+  transition: all 0.18s ease;
+}
+
+.ms-chip:hover {
+  background: var(--public-soft);
+  transform: translateY(-1px);
+}
+
+.ms-chip-active {
+  background: linear-gradient(
+    135deg,
+    var(--public-primary),
+    var(--public-primary-hover)
+  );
+
+  color: white;
+  border-color: transparent;
+}
+
+/* =========================
+   ADMIN
+========================= */
+
+.ms-admin-page {
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(232, 214, 254, 0.5),
+      transparent 32%
+    ),
+    var(--admin-bg);
+
+  color: var(--text-primary);
+}
+
+.ms-admin-card {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+
+  border-radius: 1.5rem;
+
+  box-shadow: 0 12px 34px rgba(80, 45, 110, 0.06);
+}
+
+.ms-admin-btn {
+  background: var(--admin-primary);
+
+  color: white;
+
+  border-radius: 0.9rem;
+  font-weight: 800;
+
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease;
+}
+
+.ms-admin-btn:hover {
+  background: var(--admin-primary-hover);
+  transform: translateY(-1px);
+}
+
+.ms-admin-link {
+  color: var(--text-secondary);
+
+  transition:
+    background 0.18s ease,
+    color 0.18s ease;
+}
+
+.ms-admin-link:hover {
+  background: var(--admin-soft);
+  color: var(--admin-primary);
+}
+
+.ms-admin-link-active {
+  background: var(--admin-primary-soft);
+  color: var(--admin-primary);
+}

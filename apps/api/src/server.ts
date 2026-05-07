@@ -7,6 +7,8 @@ import { orderRoutes } from "./routes/order.routes.js";
 import { authRoutes } from "./routes/auth.routes.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
 import { uploadRoutes } from "./routes/upload.routes.js";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 
 const app = express();
 
@@ -23,3 +25,15 @@ app.use(errorHandler);
 
 const port = process.env.PORT || 4000;
 app.listen(port, () => console.log(`API running on port ${port}`));
+
+app.use(helmet());
+
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 300,
+    message: {
+      message: "Demasiadas solicitudes, intenta más tarde.",
+    },
+  })
+);

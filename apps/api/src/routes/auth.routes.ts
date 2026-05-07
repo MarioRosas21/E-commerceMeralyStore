@@ -2,11 +2,14 @@ import { Router } from "express";
 import { prisma } from "../prisma.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { loginLimiter } from "../middlewares/rate-limit.middleware.js";
 
 export const authRoutes = Router();
 
-authRoutes.post("/login", async (req, res, next) => {
+authRoutes.post("/login", loginLimiter, async (req, res, next) => {
   try {
+
+    
     const { email, password } = req.body;
 
     const user = await prisma.user.findUnique({ where: { email } });

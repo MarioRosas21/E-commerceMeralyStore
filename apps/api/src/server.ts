@@ -17,7 +17,7 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://e-commerce-meraly-store.vercel.app",
+  "https://e-commerce-meraly-store-web.vercel.app",
 ];
 
 

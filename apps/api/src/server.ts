@@ -12,8 +12,12 @@ import rateLimit from "express-rate-limit";
 
 const app = express();
 
-app.use(cors({ origin: process.env.FRONTEND_URL }));
-app.use(express.json());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+  })
+);app.use(express.json());
 
 app.use("/auth", authRoutes);
 app.use("/uploads", uploadRoutes);

@@ -1,5 +1,3 @@
-import { redirect } from "next/navigation";
-
-export default function HomePage() {
-  redirect("/products");
+export default function Home() {
+  return <h1>Meraly Store</h1>;
 }

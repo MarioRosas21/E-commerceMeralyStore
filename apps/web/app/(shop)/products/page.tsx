@@ -33,6 +33,7 @@ type Product = {
 type Category = {
   id: string;
   name: string;
+  slug: string;
 };
 
 type ProductsResponse = {
@@ -45,7 +46,7 @@ type ProductsResponse = {
 
 // ✅ searchParams en Next.js 15 puede ser undefined — tipar correctamente
 type SearchParams = {
-  categoryId?: string;
+  categoria?: string;
   search?: string;
   pedido?: string;
   page?: string;
@@ -62,7 +63,6 @@ const DEFAULT_LIMIT = 15;
 export default async function ProductsPage({
   searchParams,
 }: ProductsPageProps) {
-  // ✅ Fix "params is possibly undefined" — usar ?? {} para evitar el error
   const params: SearchParams = (await searchParams) ?? {};
 
   const showOrderSuccessModal = params.pedido === "ok";
@@ -73,7 +73,7 @@ export default async function ProductsPage({
     : DEFAULT_LIMIT;
 
   const query = new URLSearchParams();
-  if (params.categoryId) query.set("categoryId", params.categoryId);
+  if (params.categoria) query.set("categoria", params.categoria);
   if (params.search) query.set("search", params.search);
   query.set("page", String(currentPage));
   query.set("limit", String(limit));
@@ -87,11 +87,10 @@ export default async function ProductsPage({
   const total: number = Array.isArray(raw) ? raw.length : (raw.total ?? 0);
   const totalPages: number = Array.isArray(raw) ? 1 : (raw.totalPages ?? 1);
 
-
   // Helper para construir URLs conservando filtros
   function buildUrl(overrides: { page?: number; limit?: number }) {
     const q = new URLSearchParams();
-    if (params.categoryId) q.set("categoryId", params.categoryId);
+    if (params.categoria) q.set("categoria", params.categoria);
     if (params.search) q.set("search", params.search);
     q.set("page", String(overrides.page ?? currentPage));
     q.set("limit", String(overrides.limit ?? limit));
@@ -112,7 +111,7 @@ export default async function ProductsPage({
             <Link
               href={`/products?limit=${limit}`}
               className={`ms-chip flex shrink-0 items-center gap-2 px-5 py-3 ${
-                !params.categoryId ? "ms-chip-active" : ""
+                !params.categoria ? "ms-chip-active" : ""
               }`}
             >
               <Sparkles size={18} />
@@ -121,9 +120,9 @@ export default async function ProductsPage({
             {categories.map((category) => (
               <Link
                 key={category.id}
-                href={`/products?categoryId=${category.id}&limit=${limit}`}
+                href={`/products?categoria=${category.slug}&limit=${limit}`}
                 className={`ms-chip flex shrink-0 items-center gap-2 px-5 py-3 ${
-                  params.categoryId === category.id ? "ms-chip-active" : ""
+                  params.categoria === category.id ? "ms-chip-active" : ""
                 }`}
               >
                 <CategoryIcon name={category.name} />

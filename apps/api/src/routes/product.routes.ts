@@ -23,27 +23,39 @@ function cleanObject(obj: any) {
 }
 
 // productRoutes.ts — GET PUBLIC
+// productRoutes.ts — GET PUBLIC
 productRoutes.get("/", async (req, res, next) => {
   try {
-    const { search, categoryId, page = "1", limit = "15" } = req.query;
+    const { search, categoryId, categoria, page = "1", limit = "15" } = req.query;
 
     const safeSearch = Array.isArray(search) ? search[0] : search;
     const safeCategoryId = Array.isArray(categoryId) ? categoryId[0] : categoryId;
+    const safeCategoria = Array.isArray(categoria) ? categoria[0] : categoria;
 
     const where: any = {
       isActive: true,
       category: { isActive: true },
     };
 
-    if (safeCategoryId) where.categoryId = String(safeCategoryId);
-    if (safeSearch) {
-      where.name = { contains: String(safeSearch), mode: "insensitive" };
+    if (safeCategoria) {
+      where.category = {
+        isActive: true,
+        slug: String(safeCategoria),
+      };
+    } else if (safeCategoryId) {
+      where.categoryId = String(safeCategoryId);
     }
 
-    const pageNum = Math.max(Number(page), 1);
-    const limitNum = Math.min(Math.max(Number(limit), 1), 50); // máx 50 por seguridad
+    if (safeSearch) {
+      where.name = {
+        contains: String(safeSearch),
+        mode: "insensitive",
+      };
+    }
 
-    // Igual que el endpoint admin: transaction para data + total
+    const pageNum = Math.max(Number(page) || 1, 1);
+    const limitNum = Math.min(Math.max(Number(limit) || 15, 1), 50);
+
     const [products, total] = await prisma.$transaction([
       prisma.product.findMany({
         where,
@@ -55,7 +67,6 @@ productRoutes.get("/", async (req, res, next) => {
       prisma.product.count({ where }),
     ]);
 
-    // Ahora devuelve { data, total } en vez de solo el array
     res.json({
       data: products,
       total,

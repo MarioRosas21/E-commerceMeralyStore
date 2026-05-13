@@ -15,55 +15,60 @@ const productSchema = z.object({
   isActive: z.boolean().optional()
 });
 
-// 🧠 helper para limpiar undefined
+// helper para limpiar undefined
 function cleanObject(obj: any) {
   return Object.fromEntries(
     Object.entries(obj).filter(([_, v]) => v !== undefined)
   );
 }
 
-// 🟢 GET PUBLIC
+// productRoutes.ts — GET PUBLIC
 productRoutes.get("/", async (req, res, next) => {
   try {
-    const { search, categoryId, page = "1", limit = "12" } = req.query;
+    const { search, categoryId, page = "1", limit = "15" } = req.query;
 
-    // 👇 arregla string | string[]
     const safeSearch = Array.isArray(search) ? search[0] : search;
     const safeCategoryId = Array.isArray(categoryId) ? categoryId[0] : categoryId;
 
     const where: any = {
       isActive: true,
-
-      category: {
-        isActive: true
-      }
+      category: { isActive: true },
     };
 
-    if (safeCategoryId) {
-      where.categoryId = String(safeCategoryId);
-    }
-
+    if (safeCategoryId) where.categoryId = String(safeCategoryId);
     if (safeSearch) {
-      where.name = {
-        contains: String(safeSearch),
-        mode: "insensitive"
-      };
+      where.name = { contains: String(safeSearch), mode: "insensitive" };
     }
 
-    const products = await prisma.product.findMany({
-      where,
-      include: { category: true },
-      skip: (Number(page) - 1) * Number(limit),
-      take: Number(limit),
-      orderBy: { createdAt: "desc" }
-    });
+    const pageNum = Math.max(Number(page), 1);
+    const limitNum = Math.min(Math.max(Number(limit), 1), 50); // máx 50 por seguridad
 
-    res.json(products);
+    // Igual que el endpoint admin: transaction para data + total
+    const [products, total] = await prisma.$transaction([
+      prisma.product.findMany({
+        where,
+        include: { category: true },
+        skip: (pageNum - 1) * limitNum,
+        take: limitNum,
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.product.count({ where }),
+    ]);
+
+    // Ahora devuelve { data, total } en vez de solo el array
+    res.json({
+      data: products,
+      total,
+      page: pageNum,
+      limit: limitNum,
+      totalPages: Math.ceil(total / limitNum),
+    });
   } catch (err) {
     next(err);
   }
 });
-// 🟢 GET ADMIN
+
+// GET ADMIN
 productRoutes.get("/admin", requireAdmin, async (req, res, next) => {
   try {
     const page = Math.max(Number(req.query.page) || 1, 1);
@@ -117,7 +122,7 @@ productRoutes.get("/admin", requireAdmin, async (req, res, next) => {
   }
 });
 
-// 🟢 GET ONE
+// GET ONE
 productRoutes.get("/:id", async (req, res, next) => {
   try {
     const product = await prisma.product.findUnique({
@@ -135,7 +140,7 @@ productRoutes.get("/:id", async (req, res, next) => {
   }
 });
 
-// 🟢 CREATE
+// CREATE
 productRoutes.post("/", requireAdmin, async (req, res, next) => {
   try {
     const data = productSchema.parse(req.body);

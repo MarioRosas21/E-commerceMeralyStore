@@ -1,7 +1,15 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function api<T>(path: string, options?: RequestInit): Promise<T> {
+  if (!API_URL) {
+    throw new Error("Falta configurar NEXT_PUBLIC_API_URL");
+  }
+
   const res = await fetch(`${API_URL}${path}`, {
+    cache: "no-store",
+    next: {
+      revalidate: 0,
+    },
     headers: {
       "Content-Type": "application/json",
       ...(options?.headers || {}),

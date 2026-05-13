@@ -28,14 +28,14 @@ const updateOrderStatusSchema = z.object({
   ]),
 });
 
-// 🧠 Helper para limpiar undefined
+// Helper para limpiar undefined
 function cleanObject(obj: any) {
   return Object.fromEntries(
     Object.entries(obj).filter(([_, v]) => v !== undefined)
   );
 }
 
-// 🧠 Helper para params/query seguros
+// Helper para params/query seguros
 function getStringValue(
   value: string | ParsedQs | (string | ParsedQs)[] | undefined
 ): string | undefined {
